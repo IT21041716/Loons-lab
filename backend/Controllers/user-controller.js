@@ -101,7 +101,7 @@ export const signin = async (req, res) => {
                     payload: registeredUser
                 })
             } else {
-                res.status(400).json({
+                res.status(401).json({
                     message: 'Password incorrect..!'
                 })
             }
@@ -147,7 +147,7 @@ export const tokenRefresh = (req, res, next) => {
     } else {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY, (err, user) => {
             if (err) {
-                res.status(404).json({
+                res.status(403).json({
                     message: "Forbidden..!"
                 })
             } else {
@@ -163,7 +163,7 @@ export const tokenRefresh = (req, res, next) => {
 
 export const userDetails = async (req, res, next) => {
     try {
-        const details = await userModel.find({ Email: req.body.email });
+        const details = await userModel.find({ Email: req.body.Email });
         if (details) {
             res.status(200).json({
                 message: "User Details Fetched Success..!",
@@ -181,34 +181,3 @@ export const userDetails = async (req, res, next) => {
     }
 }
 
-// checks whether the user have a valid session
-export const requireSignin = async (req, res, next) => {
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-        const token = req.headers.authorization.split(' ')[1];
-        if (token == null) {
-            res.status(401).json({
-                message: "Unotherized..!"
-            })
-        }
-        else {
-            jwt.verify(token, process.env.JWT_TOKEN_KEY, (err, user) => {
-                if (err) {
-                    res.status(403).json({
-                        messsage: "Forbidden..!"
-                    })
-
-                }
-                else {
-                    req.user = user,
-                        next();
-                }
-            });
-        }
-    } else {
-        res.status(401).json({
-            message: "Session Expired..!",
-            error: error
-        })
-    }
-
-}

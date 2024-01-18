@@ -1,7 +1,7 @@
 import express from 'express';
 import { signUp, signin, signout, tokenRefresh, userDetails } from '../Controllers/user-controller.js';
 import multer from 'multer';
-import { requireSignin } from '../Controllers/user-controller.js';
+import requireSignin  from '../middleware/requireSignin.js';
 
 const router = express.Router();
 
